@@ -46,7 +46,7 @@ CREATE TABLE Equipamento (
 
 
 	Etiqueta VARCHAR(50),
-	Marca VARCHAR(2),
+	Marca VARCHAR(20),
 	Descricao VARCHAR(50),
 	dataAquisicao DATE,
 	CodTipoEquipamento INT,
@@ -94,34 +94,42 @@ CREATE TABLE Intervencao(
 
 /* adição de chaves estrangeiras */
 ALTER TABLE Funcionario ADD CONSTRAINT FK_DepartamentoFuncionario FOREIGN KEY(CodDepartamento) REFERENCES Departamento(CodDepartamento) ON DELETE SET NULL ON UPDATE CASCADE;
-ALTER TABLE Equipamento ADD CONSTRAINT FK_TipoEquipamento FOREIGN KEY(CodTipoEquipamento) REFERENCES TipoEquipamento(CodTipoEquipamento);
-ALTER TABLE Equipamento ADD CONSTRAINT FK_DepartamentoEquipamento FOREIGN KEY(CodDepartamento) REFERENCES Departamento(CodDepartamento);
-ALTER TABLE Avaria ADD CONSTRAINT FK_Etiqueta FOREIGN KEY(Etiqueta) REFERENCES Equipamento(Etiqueta);
-ALTER TABLE Avaria ADD CONSTRAINT FK_Funcionatio FOREIGN KEY(CodFuncionario) REFERENCES Funcionario(CodFuncionario);
-ALTER TABLE Intervencao ADD CONSTRAINT FK_CodAvaria FOREIGN KEY(CodAvaria) REFERENCES Avaria(CodAvaria);
-ALTER TABLE Intervencao ADD CONSTRAINT FK_Funcionario FOREIGN KEY(CodFuncionario) REFERENCES Funcionario(CodFuncionario);
+ALTER TABLE Equipamento ADD CONSTRAINT FK_TipoEquipamento FOREIGN KEY(CodTipoEquipamento) REFERENCES TipoEquipamento(CodTipoEquipamento) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE Equipamento ADD CONSTRAINT FK_DepartamentoEquipamento FOREIGN KEY(CodDepartamento) REFERENCES Departamento(CodDepartamento) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE Avaria ADD CONSTRAINT FK_Etiqueta FOREIGN KEY(Etiqueta) REFERENCES Equipamento(Etiqueta) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE Avaria ADD CONSTRAINT FK_FuncionarioAvaria FOREIGN KEY(CodFuncionario) REFERENCES Funcionario(CodFuncionario) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE Intervencao ADD CONSTRAINT FK_CodAvaria FOREIGN KEY(CodAvaria) REFERENCES Avaria(CodAvaria) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE Intervencao ADD CONSTRAINT FK_FuncionarioIntervencao FOREIGN KEY(CodFuncionario) REFERENCES Funcionario(CodFuncionario) ON DELETE SET NULL ON UPDATE CASCADE;
 
 
 
 
 /* Adicionando NOT NULL em atributo */
-ALTER TABLE Funcionario MODIFY Nome SET NOT NULL;
+ALTER TABLE Funcionario MODIFY Nome VARCHAR(100) NOT NULL;
 
 
 
 
 
-ALTER TABLE Avaria DROP CONSTRAINT FK_Etiqueta;
-ALTER TABLE Avaria ADD CONSTRAINT FK_Etiqueta FOREIGN KEY(Etiqueta) REFERENCES Equipamento(Etiqueta);
+/*ALTER TABLE Avaria DROP INDEX FK_Etiqueta; 
+  ERRO: #1553 - Cannot drop index 'FK_Etiqueta': needed in a foreign key constraint*/
 
-/*CREATE DOMAIN Dom_Sexo AS CHAR(1) CHECK(VALUE= 'F' OR VALUE='f' OR VALUE='M' OR VALUE='m'); */
+/*ALTER TABLE Avaria ADD CONSTRAINT FK_Etiqueta FOREIGN KEY(Etiqueta) REFERENCES Equipamento(Etiqueta);  
+  COMENTADO JÁ QUE A TABELA JA POSSUI A FK
+*/
+
+/*CREATE DOMAIN Dom_Sexo AS CHAR(1) CHECK(VALUE= 'F' OR VALUE='f' OR VALUE='M' OR VALUE='m'); 
+  NAO FUNCIONA NO MYSQL*/
 ALTER TABLE Funcionario ADD COLUMN Sexo CHAR(1);
-/*ALTER TABLE Funcionario ALTER COLUMN Sexo TYPE Dom_Sexo; */
+/*ALTER TABLE Funcionario ALTER COLUMN Sexo TYPE Dom_Sexo; 
+  NAO FUNCIONA NO MYSQL*/
 
 
 /*Apagar tabela com restric */
 
-DROP TABLE Departamento RESTRICT;
+/* DROP TABLE Departamento RESTRICT;  
+   ERRO: #1451 - Não pode apagar uma linha pai: uma restrição de chave estrangeira falhou
+*/
 
 
 
@@ -131,91 +139,102 @@ DROP TABLE Departamento RESTRICT;
 
 
 /* Departamento */
-INSERT INTO Departamento VALUES ('Financeiro');
-INSERT INTO Departamento VALUES ('Supervisao');
-INSERT INTO Departamento VALUES ('Informatica');
-INSERT INTO Departamento VALUES ('Gerencia');
-INSERT INTO Departamento VALUES ('Presidencia');
+INSERT INTO Departamento (Descricao) VALUES ('Financeiro');
+INSERT INTO Departamento (Descricao) VALUES ('Comercial');
+INSERT INTO Departamento (Descricao) VALUES ('Informatica');
+INSERT INTO Departamento (Descricao) VALUES ('Gerencia');
+INSERT INTO Departamento (Descricao) VALUES ('Presidencia');
 
 
 /* Funcionario */
-INSERT INTO Funcionario VALUES ('Bruno', '4');
-INSERT INTO Funcionario VALUES ('Claudia', '3');
-INSERT INTO Funcionario VALUES ('Isabelle', '0');
-INSERT INTO Funcionario VALUES ('Joao Pedro', '2');
-INSERT INTO Funcionario VALUES ('Matheus', '1');
+INSERT INTO Funcionario (Nome,CodDepartamento,Sexo) VALUES ('Ana Souza', 5,'M');
+INSERT INTO Funcionario (Nome,CodDepartamento,Sexo) VALUES ('Ricardo Novais', 4,'F');
+INSERT INTO Funcionario (Nome,CodDepartamento,Sexo) VALUES ('Ricardo Freitas', 1,'F');
+INSERT INTO Funcionario (Nome,CodDepartamento,Sexo) VALUES ('Joao Pedro', 3,'M');
+INSERT INTO Funcionario (Nome,CodDepartamento,Sexo) VALUES ('Matheus Rios', 2,'M');
 
 
 /* TipoEquipamento */
 
-INSERT INTO TipoEquipamento VALUES ('Telefone');
-INSERT INTO TipoEquipamento VALUES ('Televisao');
-INSERT INTO TipoEquipamento VALUES ('Maquina de Cartao');
-INSERT INTO TipoEquipamento VALUES ('Computador');
-INSERT INTO TipoEquipamento VALUES ('Impressora');
+INSERT INTO TipoEquipamento (Descricao) VALUES ('Telefone');
+INSERT INTO TipoEquipamento (Descricao) VALUES ('Televisao');
+INSERT INTO TipoEquipamento (Descricao) VALUES ('Maquina de Cartao');
+INSERT INTO TipoEquipamento (Descricao) VALUES ('Computador');
+INSERT INTO TipoEquipamento (Descricao) VALUES ('Impressora');
 
 
 /* Equipamento */
 
 
-INSERT INTO Equipamento
 
-INSERT INTO Equipamento VALUES ('PC001CTB', 'Samsung','IMPRESSORA PRETO-BRANCO', '03-05-2018', '4', '0');
-INSERT INTO Equipamento VALUES ('PC002CTB', 'Samsung','IMPRESSORA COLORIDA', '21-05-2018', '4', '4');
-INSERT INTO Equipamento VALUES ('PC003CTB', 'Samsung','IMPRESSORA COLORIDA', '10-06-2018', '4', '3');
-INSERT INTO Equipamento VALUES ('PC004CTB', 'Samsung','IMPRESSORA COLORIDA', '15-06-2018', '4', '2');
-INSERT INTO Equipamento VALUES ('PC005CTB', 'Samsung','IMPRESSORA COLORIDA', '16-06-2018', '4', '1');
+INSERT INTO Equipamento VALUES ('PC001CTB', 'HP','IMPRESSORA PRETO-BRANCO', '2018-03-05', 4, 1);
+INSERT INTO Equipamento VALUES ('PC002CTB', 'HP','IMPRESSORA COLORIDA', '2018-05-21', 2, 5);
+INSERT INTO Equipamento VALUES ('PC003CTB', 'HP','IMPRESSORA COLORIDA', '2018-06-10', 5, 4);
+INSERT INTO Equipamento VALUES ('PC004CTB', 'HP','IMPRESSORA COLORIDA', '2018-06-15', 3, 3);
+INSERT INTO Equipamento VALUES ('PC005CTB', 'HP','IMPRESSORA COLORIDA', '2018-06-16', 5, 2);
 
 
 /* Avaria */
 
-INSERT INTO Avaria VALUES ('Impressora sem ligar', '18-06-2018', 'PC002CTB', '4');
-INSERT INTO Avaria VALUES ('Impressora com leitor de cartucho quebrado', '20-06-2018', 'PC002CTB', '2');
-INSERT INTO Avaria VALUES ('Impressora sem ligar', '25-06-2018', 'PC003CTB', '1');
-INSERT INTO Avaria VALUES ('Impressora sem ligar', '27-06-2018', 'PC005CTB', '1');
-INSERT INTO Avaria VALUES ('Impressora sem ligar', '27-06-2018', 'PC004CTB', '3');
+INSERT INTO Avaria (Descricao,Data, Etiqueta, CodFuncionario) VALUES ('Impressora sem ligar', '2018-06-18 ', 'PC002CTB', 5);
+INSERT INTO Avaria (Descricao,Data, Etiqueta, CodFuncionario) VALUES ('Impressora com leitor de cartucho quebrado', '2018-06-20', 'PC002CTB', 3);
+INSERT INTO Avaria (Descricao,Data, Etiqueta, CodFuncionario) VALUES ('Impressora sem ligar', '2018-06-25', 'PC003CTB', 2);
+INSERT INTO Avaria (Descricao,Data, Etiqueta, CodFuncionario) VALUES ('Impressora sem ligar', '2018-06-27', 'PC005CTB', 2);
+INSERT INTO Avaria (Descricao,Data, Etiqueta, CodFuncionario) VALUES ('Impressora sem ligar', '2018-06-27', 'PC004CTB', 4);
 
 /*Intervencao */
 
 
-INSERT INTO Intervencao VALUES ('Troca de Fonte','20-06-2018', 0, 3);
-INSERT INTO Intervencao VALUES ('Troca leitor de cartucho','21-06-2018', 1, 3);
-INSERT INTO Intervencao VALUES ('Troca de Fonte','26-06-2018', 2, 3);
-INSERT INTO Intervencao VALUES ('Troca de Fonte','28-06-2018', 3, 3);
-INSERT INTO Intervencao VALUES ('Troca de Fonte','30-06-2018', 4, 3);
+INSERT INTO Intervencao (Descricao, Data, CodAvaria, CodFuncionario) VALUES ('Troca de Fonte','2018-06-20', 1, 3);
+INSERT INTO Intervencao (Descricao, Data, CodAvaria, CodFuncionario) VALUES ('Troca leitor de cartucho','2018-06-21', 2, 5);
+INSERT INTO Intervencao (Descricao, Data, CodAvaria, CodFuncionario) VALUES ('Troca de Fonte','2018-06-26', 3, 2);
+INSERT INTO Intervencao (Descricao, Data, CodAvaria, CodFuncionario) VALUES ('Troca de Fonte','2018-06-28', 4, 4);
+INSERT INTO Intervencao (Descricao, Data, CodAvaria, CodFuncionario) VALUES ('Troca de Fonte','2018-06-30', 5, 4);
 
 
 
 /* Criando copias das tabelas */
 
 
-CREATE TABLE DepartamentoCopia AS SELECT*FROM Departamento;
-CREATE TABLE FuncionarioCopia AS SELECT*FROM Funcionario;
-CREATE TABLE TipoEquipamentoCopia AS SELECT*FROM TipoEquipamento;
-CREATE TABLE EquipamentoCopia AS SELECT*FROM Equipamento;
-CREATE TABLE AvariaCopia AS SELECT*FROM Avaria;
-CREATE TABLE IntervencaoCopia AS SELECT*FROM Intervencao;
+CREATE TABLE DepartamentoCopia LIKE Departamento; /*Para copiar os tipos e não dar erro*/
+INSERT INTO DepartamentoCopia SELECT*FROM Departamento;
+CREATE TABLE FuncionarioCopia LIKE Funcionario;
+INSERT INTO FuncionarioCopia SELECT*FROM Funcionario;
+CREATE TABLE TipoEquipamentoCopia LIKE TipoEquipamento;
+INSERT INTO TipoEquipamentoCopia SELECT*FROM TipoEquipamento;
+CREATE TABLE EquipamentoCopia LIKE Equipamento;
+INSERT INTO EquipamentoCopia SELECT*FROM Equipamento;
+CREATE TABLE AvariaCopia LIKE Avaria;
+INSERT INTO AvariaCopia SELECT*FROM Avaria;
+CREATE TABLE IntervencaoCopia LIKE Intervencao;
+INSERT INTO IntervencaoCopia SELECT*FROM Intervencao;
 
 
 
 
+ALTER TABLE FuncionarioCopia DROP INDEX FK_DepartamentoFuncionario;
+ALTER TABLE FuncionarioCopia ADD CONSTRAINT FK_DepartamentoFuncionarioCopia FOREIGN KEY(CodDepartamento) REFERENCES DepartamentoCopia(CodDepartamento) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE EquipamentoCopia DROP INDEX FK_TipoEquipamento;
+ALTER TABLE EquipamentoCopia ADD CONSTRAINT FK_TipoEquipamentoCopia FOREIGN KEY(CodTipoEquipamento) REFERENCES TipoEquipamentoCopia(CodTipoEquipamento) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE EquipamentoCopia DROP INDEX FK_DepartamentoEquipamento;
+ALTER TABLE EquipamentoCopia ADD CONSTRAINT FK_DepartamentoEquipamentoCopia FOREIGN KEY(CodDepartamento) REFERENCES DepartamentoCopia(CodDepartamento) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE AvariaCopia DROP INDEX FK_Etiqueta;
+ALTER TABLE AvariaCopia ADD CONSTRAINT FK_EtiquetaCopia FOREIGN KEY(Etiqueta) REFERENCES EquipamentoCopia(Etiqueta) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE AvariaCopia DROP INDEX FK_FuncionarioAvaria;
+ALTER TABLE AvariaCopia ADD CONSTRAINT FK_FuncionarioAvariaCopia FOREIGN KEY(CodFuncionario) REFERENCES FuncionarioCopia(CodFuncionario) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE IntervencaoCopia DROP INDEX FK_CodAvaria;
+ALTER TABLE IntervencaoCopia ADD CONSTRAINT FK_CodAvariaCopia FOREIGN KEY(CodAvaria) REFERENCES AvariaCopia(CodAvaria) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE IntervencaoCopia DROP INDEX FK_FuncionarioIntervencao;
+ALTER TABLE IntervencaoCopia ADD CONSTRAINT FK_FuncionarioIntervencaoCopia FOREIGN KEY(CodFuncionario) REFERENCES FuncionarioCopia(CodFuncionario) ON DELETE SET NULL ON UPDATE CASCADE;
 
 
 
-/* Adicao de chaves estrangeiras para copias */
-
-ALTER TABLE FuncionarioCopia ADD CONSTRAINT FK_Departamento FOREIGN KEY(CodDepartamento) REFERENCES DepartamentoCopia(CodDepartamento) ON DELETE CASCADE;
-ALTER TABLE EquipamentoCopia ADD CONSTRAINT FK_TipoEquipamento FOREIGN KEY(CodTipoEquipamento) REFERENCES TipoEquipamentoCopia(CodTipoEquipamento);
-ALTER TABLE EquipamentoCopia ADD CONSTRAINT FK_Departamento FOREIGN KEY (CodDepartamento) REFERENCES DepartamentoCopia(CodDepartamento);
-ALTER TABLE AvariaCopia ADD CONSTRAINT FK_Etiqueta FOREIGN KEY(Etiqueta) REFERENCES EquipamentoCopia(Etiqueta);
-ALTER TABLE AvariaCopia ADD CONSTRAINT FK_Funcionatio FOREIGN KEY(CodFuncionario) REFERENCES FuncionarioCopia(CodFuncionario);
-ALTER TABLE IntervencaoCopia ADD CONSTRAINT FK_CodAvaria FOREIGN KEY(CodAvaria) REFERENCES AvariaCopia(CodAvaria);
-ALTER TABLE IntervencaoCopia ADD CONSTRAINT FK_Funcionario FOREIGN KEY(CodFuncionario) REFERENCES FuncionarioCopia(CodFuncionario);
-
-
-
-
-
-
-
-
+DELETE FROM FuncionarioCopia;
+DELETE FROM EquipamentoCopia WHERE CodDepartamento=(SELECT CodDepartamento FROM DepartamentoCopia WHERE Descricao='Informatica' );
+UPDATE EquipamentoCopia SET Marca='Samsung';
+UPDATE FuncionarioCopia SET CodDepartamento=1 WHERE Nome='Ricardo%';
+UPDATE FuncionarioCopia SET CodDepartamento=(SELECT CodDepartamento FROM DepartamentoCopia WHERE Descricao='Informatica') WHERE Nome='Ricardo%';
+SELECT*FROM FuncionarioCopia;
+SELECT*FROM FuncionarioCopia WHERE CodDepartamento=(SELECT CodDepartamento FROM DepartamentoCopia WHERE Descricao='Comercial');
+SELECT*FROM EquipamentoCopia WHERE CodTipoEquipamento=(SELECT CodTipoEquipamento FROM TipoEquipamentoCopia WHERE Descricao='Computador');
+SELECT Nome FROM Funcionario WHERE CodFuncionario IN(SELECT CodFuncionario FROM AvariaCopia);
