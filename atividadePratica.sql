@@ -152,7 +152,7 @@ INSERT INTO Funcionario (Nome,CodDepartamento,Sexo) VALUES ('Ricardo Novais', 4,
 INSERT INTO Funcionario (Nome,CodDepartamento,Sexo) VALUES ('Ricardo Freitas', 1,'F');
 INSERT INTO Funcionario (Nome,CodDepartamento,Sexo) VALUES ('Joao Pedro', 3,'M');
 INSERT INTO Funcionario (Nome,CodDepartamento,Sexo) VALUES ('Matheus Rios', 2,'M');
-
+INSERT INTO Funcionario (Nome,CodDepartamento,Sexo) VALUES ('Rivaldo Júnior', 2,'M');
 
 /* TipoEquipamento */
 
@@ -168,10 +168,10 @@ INSERT INTO TipoEquipamento (Descricao) VALUES ('Impressora');
 
 
 INSERT INTO Equipamento VALUES ('PC001CTB', 'HP','IMPRESSORA PRETO-BRANCO', '2018-03-05', 4, 1);
-INSERT INTO Equipamento VALUES ('PC002CTB', 'HP','IMPRESSORA COLORIDA', '2018-05-21', 2, 5);
-INSERT INTO Equipamento VALUES ('PC003CTB', 'HP','IMPRESSORA COLORIDA', '2018-06-10', 5, 4);
+INSERT INTO Equipamento VALUES ('PC002CTB', 'HP','IMPRESSORA COLORIDA', '2017-05-21', 2, 5);
+INSERT INTO Equipamento VALUES ('PC003CTB', 'HP','IMPRESSORA COLORIDA', '2016-06-10', 5, 4);
 INSERT INTO Equipamento VALUES ('PC004CTB', 'HP','IMPRESSORA COLORIDA', '2018-06-15', 3, 3);
-INSERT INTO Equipamento VALUES ('PC005CTB', 'HP','IMPRESSORA COLORIDA', '2018-06-16', 5, 2);
+INSERT INTO Equipamento VALUES ('PC005CTB', 'HP','IMPRESSORA COLORIDA', '2016-06-16', 5, 2);
 
 
 /* Avaria */
@@ -230,11 +230,20 @@ ALTER TABLE IntervencaoCopia ADD CONSTRAINT FK_FuncionarioIntervencaoCopia FOREI
 
 
 DELETE FROM FuncionarioCopia;
+
+/* Insere de novo para fazer novas manipulações*/
+INSERT INTO FuncionarioCopia (Nome,CodDepartamento,Sexo) VALUES ('Ana Souza', 5,'M');
+INSERT INTO FuncionarioCopia (Nome,CodDepartamento,Sexo) VALUES ('Ricardo Novais', 4,'F');
+INSERT INTO FuncionarioCopia (Nome,CodDepartamento,Sexo) VALUES ('Ricardo Freitas', 1,'F');
+INSERT INTO FuncionarioCopia (Nome,CodDepartamento,Sexo) VALUES ('Joao Pedro', 3,'M');
+INSERT INTO FuncionarioCopia (Nome,CodDepartamento,Sexo) VALUES ('Matheus Rios', 2,'M');
+INSERT INTO FuncionarioCopia (Nome,CodDepartamento,Sexo) VALUES ('Rivaldo Júnior', 2,'M');
+
 DELETE FROM EquipamentoCopia WHERE CodDepartamento=(SELECT CodDepartamento FROM DepartamentoCopia WHERE Descricao='Informatica' );
 UPDATE EquipamentoCopia SET Marca='Samsung';
-UPDATE FuncionarioCopia SET CodDepartamento=1 WHERE Nome='Ricardo%';
-UPDATE FuncionarioCopia SET CodDepartamento=(SELECT CodDepartamento FROM DepartamentoCopia WHERE Descricao='Informatica') WHERE Nome='Ricardo%';
+UPDATE FuncionarioCopia SET CodDepartamento=1 WHERE Nome LIKE 'Ricardo%';
+UPDATE FuncionarioCopia SET CodDepartamento=(SELECT CodDepartamento FROM DepartamentoCopia WHERE Descricao='Informatica') WHERE Nome LIKE 'Ricardo%';
 SELECT*FROM FuncionarioCopia;
 SELECT*FROM FuncionarioCopia WHERE CodDepartamento=(SELECT CodDepartamento FROM DepartamentoCopia WHERE Descricao='Comercial');
 SELECT*FROM EquipamentoCopia WHERE CodTipoEquipamento=(SELECT CodTipoEquipamento FROM TipoEquipamentoCopia WHERE Descricao='Computador');
-SELECT Nome FROM Funcionario WHERE CodFuncionario IN(SELECT CodFuncionario FROM AvariaCopia);
+SELECT Nome FROM FuncionarioCopia WHERE CodFuncionario IN (SELECT CodFuncionario FROM AvariaCopia);
